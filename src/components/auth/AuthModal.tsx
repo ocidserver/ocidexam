@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AuthModalProps {
   onClose: () => void;
@@ -13,11 +14,43 @@ interface AuthModalProps {
 
 const AuthModal = ({ onClose, onLogin }: AuthModalProps) => {
   const [activeTab, setActiveTab] = useState("login");
+  const [loading, setLoading] = useState(false);
+  const { signIn, signUp } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Login form state
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  // Register form state
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, we would validate and send credentials to server
-    onLogin();
+    setLoading(true);
+    try {
+      await signIn(loginEmail, loginPassword);
+      onLogin();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (registerPassword !== confirmPassword) {
+      return; // Add error toast here
+    }
+    setLoading(true);
+    try {
+      await signUp(registerEmail, registerPassword, firstName, lastName);
+      onClose();
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,55 +68,90 @@ const AuthModal = ({ onClose, onLogin }: AuthModalProps) => {
             <TabsTrigger value="register">Register</TabsTrigger>
           </TabsList>
           
-          {/* Login Form */}
           <TabsContent value="login">
-            <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+            <form onSubmit={handleLogin} className="space-y-4 pt-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="email@example.com" required />
+                <Input
+                  id="email"
+                  type="email"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  placeholder="email@example.com"
+                  required
+                />
               </div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Button variant="link" className="p-0 h-auto text-sm" onClick={() => {}}>
-                    Forgot password?
-                  </Button>
-                </div>
-                <Input id="password" type="password" required />
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  required
+                />
               </div>
-              <Button type="submit" className="w-full">
-                Sign In
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
           </TabsContent>
           
-          {/* Register Form */}
           <TabsContent value="register">
-            <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+            <form onSubmit={handleRegister} className="space-y-4 pt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" required />
+                  <Input
+                    id="firstName"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" required />
+                  <Input
+                    id="lastName"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                  />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="registerEmail">Email</Label>
-                <Input id="registerEmail" type="email" placeholder="email@example.com" required />
+                <Input
+                  id="registerEmail"
+                  type="email"
+                  value={registerEmail}
+                  onChange={(e) => setRegisterEmail(e.target.value)}
+                  placeholder="email@example.com"
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="registerPassword">Password</Label>
-                <Input id="registerPassword" type="password" required />
+                <Input
+                  id="registerPassword"
+                  type="password"
+                  value={registerPassword}
+                  onChange={(e) => setRegisterPassword(e.target.value)}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input id="confirmPassword" type="password" required />
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
               </div>
-              <Button type="submit" className="w-full">
-                Create Account
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
           </TabsContent>
