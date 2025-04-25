@@ -1,11 +1,10 @@
-
 export const studyTopics = [
   {
     id: '1',
     name: 'Short Conversations',
     description: 'Practice understanding brief exchanges between two speakers',
     category: 'Listening',
-    level: 'Beginner',
+    level: 'Beginner' as const,
     completionRate: 75,
   },
   {
@@ -13,7 +12,7 @@ export const studyTopics = [
     name: 'Long Lectures',
     description: 'Learn to identify key points in academic lectures',
     category: 'Listening',
-    level: 'Intermediate',
+    level: 'Intermediate' as const,
     completionRate: 30,
   },
   {
@@ -21,7 +20,7 @@ export const studyTopics = [
     name: 'Main Idea Questions',
     description: 'Identify the central theme of passages',
     category: 'Reading',
-    level: 'Beginner',
+    level: 'Beginner' as const,
     completionRate: 100,
   },
   {
@@ -29,7 +28,7 @@ export const studyTopics = [
     name: 'Detail Questions',
     description: 'Answer questions about specific information in text',
     category: 'Reading',
-    level: 'Intermediate',
+    level: 'Intermediate' as const,
     completionRate: 0,
   },
   {
@@ -37,7 +36,7 @@ export const studyTopics = [
     name: 'Writing Task 1',
     description: 'Learn to describe charts and graphs effectively',
     category: 'Writing',
-    level: 'Intermediate',
+    level: 'Intermediate' as const,
     completionRate: 50,
   },
   {
@@ -45,12 +44,11 @@ export const studyTopics = [
     name: 'Speaking Part 1',
     description: 'Practice answering common interview questions',
     category: 'Speaking',
-    level: 'Beginner',
+    level: 'Beginner' as const,
     completionRate: 0,
   },
 ];
 
-// Add missing performanceData for ProgressChart
 export const performanceData = [
   {
     date: '2023-01-15',
@@ -81,7 +79,6 @@ export const performanceData = [
   }
 ];
 
-// Add missing currentUser for Dashboard
 export const currentUser = {
   id: '1',
   name: 'Jane Smith',
@@ -90,7 +87,6 @@ export const currentUser = {
   role: 'student'
 };
 
-// Add missing practiceTests for TestCard, Dashboard, and Practice
 export const practiceTests = [
   {
     id: 'test-1',
@@ -130,7 +126,6 @@ export const practiceTests = [
   }
 ];
 
-// Add missing testTypes for TestCard and Dashboard
 export const testTypes = [
   {
     id: 'toefl-itp',
@@ -144,7 +139,6 @@ export const testTypes = [
   }
 ];
 
-// Add missing testSections for TestCard
 export const testSections = {
   'toefl-itp': [
     { id: 'listening', name: 'Listening Comprehension', timeMinutes: 35 },
@@ -159,10 +153,12 @@ export const testSections = {
   ]
 };
 
-// Add missing adminStats for Admin page
 export const adminStats = {
   totalUsers: 450,
   activeUsers: 312,
   testsCompleted: 1256,
-  averageScore: 75
+  averageScore: {
+    "toefl-itp": 540,
+    "ielts": 6.5
+  }
 };

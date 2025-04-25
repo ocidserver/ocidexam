@@ -24,6 +24,7 @@ const Reports = () => {
     target: 550
   }));
   
+  // Fix: Create a new array instead of directly assigning the readonly array
   const strengthsWeaknesses = [
     { area: 'Main Ideas', score: 85, change: 5, status: 'strength' },
     { area: 'Supporting Details', score: 67, change: 2, status: 'neutral' },
@@ -31,7 +32,7 @@ const Reports = () => {
     { area: 'Inference', score: 62, change: -3, status: 'weakness' },
     { area: 'Grammar', score: 75, change: 0, status: 'neutral' },
     { area: 'Organization', score: 59, change: -5, status: 'weakness' },
-  ] as const;
+  ];
   
   const testHistory = [
     { 
