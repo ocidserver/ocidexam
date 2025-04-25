@@ -49,3 +49,120 @@ export const studyTopics = [
     completionRate: 0,
   },
 ];
+
+// Add missing performanceData for ProgressChart
+export const performanceData = [
+  {
+    date: '2023-01-15',
+    scores: {
+      listening: 25,
+      structure: 22,
+      reading: 24,
+      total: 530
+    }
+  },
+  {
+    date: '2023-02-15',
+    scores: {
+      listening: 26,
+      structure: 23,
+      reading: 25,
+      total: 560
+    }
+  },
+  {
+    date: '2023-03-20',
+    scores: {
+      listening: 27,
+      structure: 24,
+      reading: 26,
+      total: 580
+    }
+  }
+];
+
+// Add missing currentUser for Dashboard
+export const currentUser = {
+  id: '1',
+  name: 'Jane Smith',
+  email: 'jane.smith@example.com',
+  avatarUrl: null,
+  role: 'student'
+};
+
+// Add missing practiceTests for TestCard, Dashboard, and Practice
+export const practiceTests = [
+  {
+    id: 'test-1',
+    name: 'TOEFL ITP Practice Test 1',
+    type: 'toefl-itp',
+    sections: ['listening', 'structure', 'reading'],
+    difficulty: 'Medium',
+    completionRate: 75,
+    lastAttempt: '2023-03-15'
+  },
+  {
+    id: 'test-2',
+    name: 'TOEFL ITP Practice Test 2',
+    type: 'toefl-itp',
+    sections: ['listening', 'structure', 'reading'],
+    difficulty: 'Hard',
+    completionRate: 0,
+    lastAttempt: null
+  },
+  {
+    id: 'test-3',
+    name: 'IELTS Academic Practice Test 1',
+    type: 'ielts',
+    sections: ['listening', 'reading', 'writing', 'speaking'],
+    difficulty: 'Hard',
+    completionRate: 30,
+    lastAttempt: '2023-02-20'
+  },
+  {
+    id: 'test-4',
+    name: 'IELTS General Practice Test 1',
+    type: 'ielts',
+    sections: ['listening', 'reading', 'writing', 'speaking'],
+    difficulty: 'Medium',
+    completionRate: 0,
+    lastAttempt: null
+  }
+];
+
+// Add missing testTypes for TestCard and Dashboard
+export const testTypes = [
+  {
+    id: 'toefl-itp',
+    name: 'TOEFL ITP',
+    color: 'blue-600'
+  },
+  {
+    id: 'ielts',
+    name: 'IELTS',
+    color: 'emerald-600'
+  }
+];
+
+// Add missing testSections for TestCard
+export const testSections = {
+  'toefl-itp': [
+    { id: 'listening', name: 'Listening Comprehension', timeMinutes: 35 },
+    { id: 'structure', name: 'Structure and Written Expression', timeMinutes: 25 },
+    { id: 'reading', name: 'Reading Comprehension', timeMinutes: 55 }
+  ],
+  'ielts': [
+    { id: 'listening', name: 'Listening', timeMinutes: 30 },
+    { id: 'reading', name: 'Reading', timeMinutes: 60 },
+    { id: 'writing', name: 'Writing', timeMinutes: 60 },
+    { id: 'speaking', name: 'Speaking', timeMinutes: 15 }
+  ]
+};
+
+// Add missing adminStats for Admin page
+export const adminStats = {
+  totalUsers: 450,
+  activeUsers: 312,
+  testsCompleted: 1256,
+  averageScore: 75
+};

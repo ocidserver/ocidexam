@@ -29,7 +29,25 @@ const TestCard = ({
   className
 }: TestCardProps) => {
   const testType = testTypes.find(t => t.id === type);
-  const colorClass = `text-${testType?.color}`;
+  
+  // Get color class based on test type
+  const getColorClass = () => {
+    if (type === 'toefl-itp') return 'text-blue-600';
+    if (type === 'ielts') return 'text-emerald-600';
+    return 'text-gray-600';
+  };
+
+  const getButtonColorClass = () => {
+    if (type === 'toefl-itp') return 'bg-blue-600 hover:bg-blue-700';
+    if (type === 'ielts') return 'bg-emerald-600 hover:bg-emerald-700';
+    return 'bg-gray-600 hover:bg-gray-700';
+  };
+
+  const getHeaderClass = () => {
+    if (type === 'toefl-itp') return 'bg-blue-50';
+    if (type === 'ielts') return 'bg-emerald-50';
+    return 'bg-gray-50';
+  };
   
   // Calculate total time for the test
   const getTotalTime = () => {
@@ -43,10 +61,13 @@ const TestCard = ({
   };
   
   const totalTime = getTotalTime();
+  const colorClass = getColorClass();
+  const buttonColorClass = getButtonColorClass();
+  const headerClass = getHeaderClass();
   
   return (
-    <Card className={`overflow-hidden ${className}`}>
-      <CardHeader className={`bg-${testType?.color}/10 pb-2`}>
+    <Card className={`overflow-hidden ${className || ''}`}>
+      <CardHeader className={`${headerClass} pb-2`}>
         <div className="flex justify-between items-start">
           <Badge variant="outline" className={`${colorClass} border-current`}>
             {testType?.name}
@@ -90,7 +111,7 @@ const TestCard = ({
         </Button>
         <Button
           size="sm"
-          className={`bg-${testType?.color} hover:bg-${testType?.color}/90`}
+          className={buttonColorClass}
           asChild
         >
           <Link to={`/practice/${id}/start`}>Start Test</Link>
