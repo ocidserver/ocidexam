@@ -54,7 +54,6 @@ const GlobalProgressHeader = ({
             <div 
               className="absolute inset-0 rounded-full border-8 border-primary"
               style={{
-                clipPath: `polygon(0 0, 100% 0, 100% 100%, 0% 100%)`,
                 clipPath: `path('M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,45 0 1 1 0,-90 z')`,
                 maskImage: `conic-gradient(#000 ${completionPercentage}%, transparent 0)`,
                 WebkitMaskImage: `conic-gradient(#000 ${completionPercentage}%, transparent 0)`
