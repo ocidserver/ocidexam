@@ -1,3 +1,4 @@
+
 export const studyTopics = [
   {
     id: '1',
@@ -6,6 +7,8 @@ export const studyTopics = [
     category: 'Listening',
     level: 'Beginner' as const,
     completionRate: 75,
+    quizScore: 80,
+    lastAccessed: '2024-04-15',
   },
   {
     id: '2',
@@ -14,6 +17,7 @@ export const studyTopics = [
     category: 'Listening',
     level: 'Intermediate' as const,
     completionRate: 30,
+    lastAccessed: '2024-04-20',
   },
   {
     id: '3',
@@ -22,6 +26,8 @@ export const studyTopics = [
     category: 'Reading',
     level: 'Beginner' as const,
     completionRate: 100,
+    quizScore: 95,
+    lastAccessed: '2024-04-10',
   },
   {
     id: '4',
@@ -38,6 +44,8 @@ export const studyTopics = [
     category: 'Writing',
     level: 'Intermediate' as const,
     completionRate: 50,
+    quizScore: 60,
+    lastAccessed: '2024-04-22',
   },
   {
     id: '6',
