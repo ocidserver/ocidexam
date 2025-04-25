@@ -24,14 +24,14 @@ const Reports = () => {
     target: 550
   }));
   
-  // Fix: Create a new array instead of directly assigning the readonly array
+  // Fix: Create a new array with explicit literal types for status
   const strengthsWeaknesses = [
-    { area: 'Main Ideas', score: 85, change: 5, status: 'strength' },
-    { area: 'Supporting Details', score: 67, change: 2, status: 'neutral' },
-    { area: 'Vocabulary', score: 78, change: 3, status: 'strength' },
-    { area: 'Inference', score: 62, change: -3, status: 'weakness' },
-    { area: 'Grammar', score: 75, change: 0, status: 'neutral' },
-    { area: 'Organization', score: 59, change: -5, status: 'weakness' },
+    { area: 'Main Ideas', score: 85, change: 5, status: 'strength' as const },
+    { area: 'Supporting Details', score: 67, change: 2, status: 'neutral' as const },
+    { area: 'Vocabulary', score: 78, change: 3, status: 'strength' as const },
+    { area: 'Inference', score: 62, change: -3, status: 'weakness' as const },
+    { area: 'Grammar', score: 75, change: 0, status: 'neutral' as const },
+    { area: 'Organization', score: 59, change: -5, status: 'weakness' as const },
   ];
   
   const testHistory = [
