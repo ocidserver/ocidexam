@@ -5,6 +5,8 @@ import { studyTopics } from "@/data/mockData";
 import SearchFilters from "@/components/self-study/SearchFilters";
 import TopicsGrid from "@/components/self-study/TopicsGrid";
 import TopicsByCategory from "@/components/self-study/TopicsByCategory";
+import GlobalProgressHeader from "@/components/self-study/GlobalProgressHeader";
+import { StudyTopic, StudyTopicLevel } from "@/types/study";
 
 const SelfStudy = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,13 +34,24 @@ const SelfStudy = () => {
     }
     acc[topic.category].push(topic);
     return acc;
-  }, {} as Record<string, typeof studyTopics>);
+  }, {} as Record<string, StudyTopic[]>);
   
   const handleClearFilters = () => {
     setSearchQuery("");
     setLevelFilter("all");
     setCategoryFilter("all");
   };
+  
+  // Calculate global progress statistics
+  const totalTopics = studyTopics.length;
+  const completedTopics = studyTopics.filter(topic => topic.completionRate === 100).length;
+  const averageScore = studyTopics.reduce((sum, topic) => sum + (topic.quizScore || 0), 0) / 
+                      (studyTopics.filter(topic => topic.quizScore !== undefined).length || 1);
+  
+  // Get last accessed topic for "Continue Learning" button
+  const lastAccessedTopic = studyTopics.find(topic => 
+    topic.lastAccessed && topic.completionRate > 0 && topic.completionRate < 100
+  );
   
   return (
     <div className="container px-4 py-8 md:px-6">
@@ -48,6 +61,13 @@ const SelfStudy = () => {
           Enhance your English skills with focused learning materials organized by topic.
         </p>
       </div>
+      
+      <GlobalProgressHeader
+        totalCompleted={completedTopics}
+        totalTopics={totalTopics}
+        averageScore={Math.round(averageScore)}
+        lastAccessedTopicId={lastAccessedTopic?.id}
+      />
       
       <SearchFilters
         searchQuery={searchQuery}

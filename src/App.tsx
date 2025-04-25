@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +11,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
 import SelfStudy from "./pages/SelfStudy";
+import StudyTopicDetail from "./pages/StudyTopicDetail";
 import Reports from "./pages/Reports";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -31,7 +33,7 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/practice" element={<Practice />} />
                 <Route path="/self-study" element={<SelfStudy />} />
-                <Route path="/self-study/:id" element={<SelfStudy />} />
+                <Route path="/self-study/:id" element={<StudyTopicDetail />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="*" element={<NotFound />} />
