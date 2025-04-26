@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -12,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAuth } from "@/contexts/AuthContext";  // Add this import
+import { useAuth } from "@/contexts/AuthContext";
 
 const topicSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -32,10 +31,9 @@ interface TopicEditorProps {
 
 export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => {
   const { toast } = useToast();
-  const { user } = useAuth();  // Add this to check admin status
+  const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Check admin status
   useEffect(() => {
     const checkAdminStatus = async () => {
       if (user) {
@@ -122,7 +120,6 @@ export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => 
   }, [topic, form]);
 
   const onSubmit = async (values: z.infer<typeof topicSchema>) => {
-    // Only proceed if user is an admin
     if (!isAdmin) {
       toast({
         title: "Unauthorized",
@@ -147,7 +144,13 @@ export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => 
         const { error } = await supabase
           .from('study_materials')
           .insert({
-            ...values,
+            title: values.title,
+            description: values.description,
+            theory_content: values.theory_content,
+            examples_content: values.examples_content || null,
+            practice_content: values.practice_content || null,
+            quiz_content: values.quiz_content || null,
+            sub_topic_id: values.sub_topic_id,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
             needs_revision: false,
@@ -171,7 +174,6 @@ export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => 
     }
   };
 
-  // Disable form if not an admin
   if (!isAdmin) {
     return (
       <div className="flex items-center justify-center h-full">
