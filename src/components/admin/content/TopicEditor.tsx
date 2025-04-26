@@ -10,8 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAuth } from "@/contexts/AuthContext";  // Add this import
 
 const topicSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -31,6 +32,34 @@ interface TopicEditorProps {
 
 export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();  // Add this to check admin status
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Check admin status
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (user) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('is_admin')
+          .eq('id', user.id)
+          .single();
+
+        if (data?.is_admin) {
+          setIsAdmin(true);
+        } else {
+          toast({
+            title: "Unauthorized",
+            description: "Only admin users can create or edit topics.",
+            variant: "destructive"
+          });
+        }
+      }
+    };
+
+    checkAdminStatus();
+  }, [user, toast]);
+
   const form = useForm<z.infer<typeof topicSchema>>({
     resolver: zodResolver(topicSchema),
     defaultValues: {
@@ -93,37 +122,36 @@ export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => 
   }, [topic, form]);
 
   const onSubmit = async (values: z.infer<typeof topicSchema>) => {
-    try {
-      // Ensure required fields are present
-      if (!values.title || !values.sub_topic_id) {
-        toast({
-          title: "Validation Error",
-          description: "Title and Sub-topic are required fields",
-          variant: "destructive",
-        });
-        return;
-      }
+    // Only proceed if user is an admin
+    if (!isAdmin) {
+      toast({
+        title: "Unauthorized",
+        description: "Only admin users can create or edit topics.",
+        variant: "destructive"
+      });
+      return;
+    }
 
+    try {
       if (topicId) {
-        // Update existing topic
         const { error } = await supabase
           .from('study_materials')
-          .update(values)
+          .update({
+            ...values,
+            updated_at: new Date().toISOString()
+          })
           .eq('id', topicId);
         
         if (error) throw error;
       } else {
-        // Create new topic - ensure we're passing a single object, not an array
         const { error } = await supabase
           .from('study_materials')
           .insert({
-            title: values.title,
-            description: values.description,
-            theory_content: values.theory_content,
-            examples_content: values.examples_content || null,
-            practice_content: values.practice_content || null,
-            quiz_content: values.quiz_content || null,
-            sub_topic_id: values.sub_topic_id
+            ...values,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            needs_revision: false,
+            order_index: 0
           });
         
         if (error) throw error;
@@ -142,6 +170,15 @@ export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => 
       });
     }
   };
+
+  // Disable form if not an admin
+  if (!isAdmin) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-muted-foreground">Only admin users can create or edit topics.</p>
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>
