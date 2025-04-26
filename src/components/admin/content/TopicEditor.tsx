@@ -51,7 +51,18 @@ export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => 
 
   const onSubmit = async (values: z.infer<typeof topicSchema>) => {
     try {
+      // Ensure required fields are present
+      if (!values.title || !values.sub_topic_id) {
+        toast({
+          title: "Validation Error",
+          description: "Title and Sub-topic are required fields",
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (topicId) {
+        // Update existing topic
         const { error } = await supabase
           .from('study_materials')
           .update(values)
@@ -59,9 +70,18 @@ export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => 
         
         if (error) throw error;
       } else {
+        // Create new topic - ensure we're passing a single object, not an array
         const { error } = await supabase
           .from('study_materials')
-          .insert([values]);
+          .insert({
+            title: values.title,
+            description: values.description,
+            theory_content: values.theory_content,
+            examples_content: values.examples_content || null,
+            practice_content: values.practice_content || null,
+            quiz_content: values.quiz_content || null,
+            sub_topic_id: values.sub_topic_id
+          });
         
         if (error) throw error;
       }
