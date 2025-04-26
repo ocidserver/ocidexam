@@ -1,9 +1,8 @@
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TopicsList } from "./TopicsList";
 import { TopicEditor } from "./TopicEditor";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +11,7 @@ import { useState } from "react";
 export const ContentManagement = () => {
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: topics, isLoading } = useQuery({
     queryKey: ['study-materials'],
@@ -40,6 +40,15 @@ export const ContentManagement = () => {
     },
   });
 
+  const handleRefreshData = () => {
+    queryClient.invalidateQueries({ queryKey: ['study-materials'] });
+  };
+
+  const handleCreateTopic = () => {
+    setSelectedTopicId(null);
+    setIsCreating(true);
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -48,7 +57,7 @@ export const ContentManagement = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold">Content Management</h2>
-        <Button onClick={() => setIsCreating(true)}>
+        <Button onClick={handleCreateTopic}>
           <Plus className="h-4 w-4 mr-2" />
           Create New Topic
         </Button>
@@ -59,7 +68,10 @@ export const ContentManagement = () => {
           <TopicsList 
             topics={topics || []} 
             selectedTopicId={selectedTopicId}
-            onSelectTopic={setSelectedTopicId}
+            onSelectTopic={(id) => {
+              setSelectedTopicId(id);
+              setIsCreating(false);
+            }}
           />
           
           <div className="space-y-4">
@@ -67,17 +79,30 @@ export const ContentManagement = () => {
               <TopicEditor 
                 onSave={() => {
                   setIsCreating(false);
-                  // Refetch topics
+                  handleRefreshData();
                 }}
                 onCancel={() => setIsCreating(false)}
               />
-            ) : selectedTopicId && (
+            ) : selectedTopicId ? (
               <TopicEditor 
                 topicId={selectedTopicId}
                 onSave={() => {
-                  // Refetch topics
+                  handleRefreshData();
                 }}
               />
+            ) : (
+              <div className="flex items-center justify-center h-[600px] border rounded-md p-4">
+                <div className="text-center">
+                  <h3 className="text-lg font-medium">No Topic Selected</h3>
+                  <p className="text-muted-foreground mt-2">
+                    Select a topic from the list to edit or create a new one.
+                  </p>
+                  <Button className="mt-4" onClick={handleCreateTopic}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create New Topic
+                  </Button>
+                </div>
+              </div>
             )}
           </div>
         </div>

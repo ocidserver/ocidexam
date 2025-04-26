@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const topicSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -31,6 +33,15 @@ export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => 
   const { toast } = useToast();
   const form = useForm<z.infer<typeof topicSchema>>({
     resolver: zodResolver(topicSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      theory_content: "",
+      examples_content: "",
+      practice_content: "",
+      quiz_content: null,
+      sub_topic_id: "",
+    }
   });
 
   const { data: topic } = useQuery({
@@ -48,6 +59,38 @@ export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => 
     },
     enabled: !!topicId,
   });
+
+  const { data: subTopics } = useQuery({
+    queryKey: ['sub-topics'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('sub_topics')
+        .select(`
+          id,
+          name,
+          skill_id,
+          skills (name)
+        `)
+        .order('name');
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  useEffect(() => {
+    if (topic) {
+      form.reset({
+        title: topic.title || "",
+        description: topic.description || "",
+        theory_content: topic.theory_content || "",
+        examples_content: topic.examples_content || "",
+        practice_content: topic.practice_content || "",
+        quiz_content: topic.quiz_content || null,
+        sub_topic_id: topic.sub_topic_id || "",
+      });
+    }
+  }, [topic, form]);
 
   const onSubmit = async (values: z.infer<typeof topicSchema>) => {
     try {
@@ -129,6 +172,34 @@ export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => 
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="sub_topic_id"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sub Topic</FormLabel>
+                <Select 
+                  onValueChange={field.onChange} 
+                  defaultValue={field.value}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a sub topic" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {subTopics?.map(subTopic => (
+                      <SelectItem key={subTopic.id} value={subTopic.id}>
+                        {subTopic.name} {subTopic.skills?.name ? `(${subTopic.skills.name})` : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
         </div>
 
         <Tabs defaultValue="theory">
@@ -182,6 +253,10 @@ export const TopicEditor = ({ topicId, onSave, onCancel }: TopicEditorProps) => 
                 </FormItem>
               )}
             />
+          </TabsContent>
+
+          <TabsContent value="quiz">
+            <p className="text-muted-foreground">Quiz editing will be added in a future update.</p>
           </TabsContent>
         </Tabs>
 
