@@ -5,6 +5,7 @@ import { AnalyticsCharts } from "@/components/admin/AnalyticsCharts"
 import { TestsManagement } from "@/components/admin/TestsManagement"
 import { UsersManagement } from "@/components/admin/UsersManagement"
 import { SettingsManagement } from "@/components/admin/SettingsManagement"
+import { ContentManagement } from "@/components/admin/content/ContentManagement"
 
 const Admin = () => {
   return (
@@ -12,19 +13,24 @@ const Admin = () => {
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">Admin Dashboard</h1>
         <p className="text-muted-foreground">
-          Manage tests, users, and system settings.
+          Manage tests, users, content, and system settings.
         </p>
       </div>
       
       <StatsCards />
       <AnalyticsCharts />
       
-      <Tabs defaultValue="tests" className="mb-8">
-        <TabsList className="grid md:grid-cols-3 lg:w-[400px]">
+      <Tabs defaultValue="content" className="mb-8">
+        <TabsList className="grid md:grid-cols-4 lg:w-[600px]">
+          <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="tests">Tests</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="content" className="mt-6">
+          <ContentManagement />
+        </TabsContent>
         
         <TabsContent value="tests" className="mt-6">
           <TestsManagement />

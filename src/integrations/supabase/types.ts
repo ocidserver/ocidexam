@@ -49,6 +49,7 @@ export type Database = {
           created_at: string
           first_name: string | null
           id: string
+          is_admin: boolean | null
           last_name: string | null
           preferred_test_type: string | null
           updated_at: string
@@ -57,6 +58,7 @@ export type Database = {
           created_at?: string
           first_name?: string | null
           id: string
+          is_admin?: boolean | null
           last_name?: string | null
           preferred_test_type?: string | null
           updated_at?: string
@@ -65,6 +67,7 @@ export type Database = {
           created_at?: string
           first_name?: string | null
           id?: string
+          is_admin?: boolean | null
           last_name?: string | null
           preferred_test_type?: string | null
           updated_at?: string
