@@ -15,11 +15,11 @@ export const ContentManagement = () => {
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const queryClient = useQueryClient();
-  const isAdmin = useAdminStatus();
+  const { isAdmin, isLoading: isLoadingAdminStatus } = useAdminStatus();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const { data: topics, isLoading } = useQuery({
+  const { data: topics, isLoading: isLoadingTopics } = useQuery({
     queryKey: ['study-materials'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -51,6 +51,8 @@ export const ContentManagement = () => {
       }
       return data;
     },
+    // Only fetch if admin status is confirmed
+    enabled: isAdmin === true,
   });
 
   const handleRefreshData = () => {
@@ -64,16 +66,38 @@ export const ContentManagement = () => {
 
   // Use useEffect to handle navigation based on admin status
   useEffect(() => {
-    if (isAdmin === false) {
+    // Only redirect if we've explicitly determined user is not an admin
+    // Don't redirect while still loading
+    if (isAdmin === false && !isLoadingAdminStatus) {
+      console.log("Not an admin, redirecting to home");
       navigate("/");
     }
-  }, [isAdmin, navigate]);
+  }, [isAdmin, isLoadingAdminStatus, navigate]);
 
-  // Show loading state while checking admin status and fetching data
-  if (isAdmin === undefined || isLoading) {
-    return <div className="container px-4 py-8">Loading...</div>;
+  // Show loading state while checking admin status
+  if (isLoadingAdminStatus) {
+    return (
+      <div className="container px-4 py-8">
+        <div className="flex items-center justify-center h-64">
+          <p className="text-lg">Verifying admin status...</p>
+        </div>
+      </div>
+    );
   }
 
+  // If admin status is confirmed but topics are still loading
+  if (isAdmin && isLoadingTopics) {
+    return (
+      <div className="container px-4 py-8">
+        <div className="flex items-center justify-center h-64">
+          <p className="text-lg">Loading content...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // At this point, we've already redirected non-admins
+  // so we can safely assume the user is an admin
   return (
     <div className="container px-4 py-8">
       <div className="space-y-6">
