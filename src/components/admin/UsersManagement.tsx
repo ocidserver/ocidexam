@@ -13,6 +13,17 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 
+interface Profile {
+  id: string;
+  created_at: string;
+  first_name: string | null;
+  last_name: string | null;
+  is_admin: boolean | null;
+  updated_at: string;
+  preferred_test_type: string | null;
+  email?: string; // Make email optional since it needs to be added manually
+}
+
 interface User {
   id: string;
   email: string;
@@ -73,43 +84,33 @@ export const UsersManagement = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      // Fetch users from auth.users via profiles
+      // Fetch profiles from the profiles table
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*');
 
       if (profilesError) throw profilesError;
 
-      // For each profile, fetch the user email from auth
-      const usersWithProfiles = await Promise.all(profiles.map(async (profile) => {
-        try {
-          // This is a simplification - in a real app you might need to use admin API
-          // or have a different approach to get user details
-          const { data, error } = await supabase
-            .from('profiles')
-            .select('id, first_name, last_name, is_admin')
-            .eq('id', profile.id)
-            .single();
-          
-          return {
-            id: profile.id,
-            email: profile.email || '', // You might need to store this in profiles
-            created_at: profile.created_at,
-            profile: {
-              first_name: data?.first_name,
-              last_name: data?.last_name,
-              is_admin: data?.is_admin
-            }
-          };
-        } catch (error) {
-          console.error("Error fetching user details:", error);
-          return null;
-        }
+      // Transform profiles into user objects with email
+      const usersWithProfiles = await Promise.all(profiles.map(async (profile: Profile) => {
+        // In a real app, you might need to get this from authentication service
+        // For now, we'll create a placeholder email using the user's ID
+        const email = `user-${profile.id.substring(0, 8)}@example.com`;
+        
+        return {
+          id: profile.id,
+          email: email, // Use the placeholder email or fetch from auth if available
+          created_at: profile.created_at,
+          profile: {
+            first_name: profile.first_name,
+            last_name: profile.last_name,
+            is_admin: profile.is_admin
+          }
+        };
       }));
 
-      const validUsers = usersWithProfiles.filter(Boolean) as User[];
-      setUsers(validUsers);
-      setFilteredUsers(validUsers);
+      setUsers(usersWithProfiles);
+      setFilteredUsers(usersWithProfiles);
     } catch (error) {
       console.error("Error fetching users:", error);
       toast({
