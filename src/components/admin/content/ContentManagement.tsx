@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { TopicsList } from "./TopicsList";
 import { TopicEditor } from "./TopicEditor";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAdminStatus } from "@/hooks/use-admin-status";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -62,12 +62,15 @@ export const ContentManagement = () => {
     setIsCreating(true);
   };
 
-  if (!isAdmin) {
-    navigate("/");
-    return null;
-  }
+  // Use useEffect to handle navigation based on admin status
+  useEffect(() => {
+    if (isAdmin === false) {
+      navigate("/");
+    }
+  }, [isAdmin, navigate]);
 
-  if (isLoading) {
+  // Show loading state while checking admin status and fetching data
+  if (isAdmin === undefined || isLoading) {
     return <div className="container px-4 py-8">Loading...</div>;
   }
 
