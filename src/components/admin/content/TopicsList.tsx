@@ -11,18 +11,26 @@ export const TopicsList = ({ topics, selectedTopicId, onSelectTopic }: TopicsLis
   return (
     <ScrollArea className="h-[600px] border rounded-md p-4">
       <div className="space-y-2">
-        {topics.map((topic) => (
-          <button
-            key={topic.id}
-            onClick={() => onSelectTopic(topic.id)}
-            className={`w-full text-left px-3 py-2 rounded-md hover:bg-muted transition-colors ${
-              selectedTopicId === topic.id ? 'bg-muted font-medium' : ''
-            }`}
-          >
-            <p className="font-medium">{topic.title}</p>
-            <p className="text-sm text-muted-foreground">{topic.sub_topics?.name}</p>
-          </button>
-        ))}
+        {topics.length === 0 ? (
+          <p className="text-muted-foreground text-center py-4">
+            No topics available
+          </p>
+        ) : (
+          topics.map((topic) => (
+            <button
+              key={topic.id}
+              onClick={() => onSelectTopic(topic.id)}
+              className={`w-full text-left px-3 py-2 rounded-md hover:bg-muted transition-colors ${
+                selectedTopicId === topic.id ? 'bg-muted font-medium' : ''
+              }`}
+            >
+              <p className="font-medium truncate">{topic.title}</p>
+              <p className="text-sm text-muted-foreground truncate">
+                {topic.sub_topics?.name} • {topic.sub_topics?.skills?.name}
+              </p>
+            </button>
+          ))
+        )}
       </div>
     </ScrollArea>
   );

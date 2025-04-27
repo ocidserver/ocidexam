@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +14,7 @@ import StudyTopicDetail from "./pages/StudyTopicDetail";
 import Reports from "./pages/Reports";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import ContentManagement from "./pages/ContentManagement";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +36,7 @@ const App = () => (
                 <Route path="/self-study/:id" element={<StudyTopicDetail />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/content-management" element={<ContentManagement />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
