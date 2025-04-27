@@ -1,16 +1,18 @@
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MenuIcon, X } from "lucide-react";
 import AuthModal from "../auth/AuthModal";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Simulated login state
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -21,14 +23,15 @@ const Header = () => {
   };
 
   const handleLogin = () => {
-    setIsLoggedIn(true);
     setShowAuthModal(false);
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
   };
 
+  // Menu items based on authentication status
   const menuItems = [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Practice Tests', path: '/practice' },
@@ -51,7 +54,7 @@ const Header = () => {
           {/* Desktop Navigation */}
           {!isMobile && (
             <nav className="hidden md:flex items-center space-x-4">
-              {isLoggedIn && menuItems.map((item) => (
+              {user && menuItems.map((item) => (
                 <Link 
                   key={item.name} 
                   to={item.path}
@@ -60,7 +63,7 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
-              {isLoggedIn && (
+              {user && (
                 <Link 
                   to={adminMenuItem.path}
                   className="text-sm font-medium hover:text-secondary"
@@ -72,7 +75,7 @@ const Header = () => {
           )}
 
           <div className="flex items-center gap-2">
-            {isLoggedIn ? (
+            {user ? (
               <>
                 <Button 
                   variant="outline" 
@@ -106,7 +109,7 @@ const Header = () => {
         {isMobile && mobileMenuOpen && (
           <div className="fixed inset-0 top-16 z-50 bg-background pt-2 px-4">
             <nav className="flex flex-col space-y-4 p-4">
-              {isLoggedIn && menuItems.map((item) => (
+              {user && menuItems.map((item) => (
                 <Link 
                   key={item.name} 
                   to={item.path}
@@ -116,7 +119,7 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
-              {isLoggedIn && (
+              {user && (
                 <Link 
                   to={adminMenuItem.path}
                   className="text-lg font-medium p-2 hover:bg-muted rounded-md text-secondary"
@@ -125,7 +128,7 @@ const Header = () => {
                   {adminMenuItem.name}
                 </Link>
               )}
-              {isLoggedIn ? (
+              {user ? (
                 <Button 
                   variant="outline" 
                   onClick={handleLogout}

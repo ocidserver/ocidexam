@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface AuthModalProps {
   onClose: () => void;
@@ -16,6 +17,7 @@ const AuthModal = ({ onClose, onLogin }: AuthModalProps) => {
   const [activeTab, setActiveTab] = useState("login");
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
+  const { toast } = useToast();
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState("");
@@ -32,6 +34,7 @@ const AuthModal = ({ onClose, onLogin }: AuthModalProps) => {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log(`Logging in with email: ${loginEmail}`);
       await signIn(loginEmail, loginPassword);
       onLogin();
     } finally {
@@ -42,7 +45,12 @@ const AuthModal = ({ onClose, onLogin }: AuthModalProps) => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (registerPassword !== confirmPassword) {
-      return; // Add error toast here
+      toast({
+        title: "Passwords don't match",
+        description: "Please make sure your passwords match",
+        variant: "destructive"
+      });
+      return;
     }
     setLoading(true);
     try {

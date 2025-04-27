@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType {
   user: User | null;
@@ -39,13 +39,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      console.log(`Attempting to sign in with email: ${email}`);
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        console.error("Authentication error:", error);
+        throw error;
+      }
+      
+      console.log("Sign in successful:", data);
       toast({ title: "Welcome back!", description: "You've successfully signed in." });
     } catch (error: any) {
+      console.error("Error during sign in:", error);
       toast({ 
         title: "Error signing in", 
-        description: error.message,
+        description: error.message || "Failed to authenticate",
         variant: "destructive"
       });
     }
@@ -53,7 +61,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      console.log(`Attempting to sign up with email: ${email}`);
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -63,15 +72,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         }
       });
-      if (error) throw error;
+      
+      if (error) {
+        console.error("Sign up error:", error);
+        throw error;
+      }
+      
+      console.log("Sign up successful:", data);
       toast({ 
         title: "Welcome!", 
         description: "Your account has been created. Please check your email to confirm your registration." 
       });
     } catch (error: any) {
+      console.error("Error during sign up:", error);
       toast({ 
         title: "Error signing up", 
-        description: error.message,
+        description: error.message || "Failed to create account",
         variant: "destructive"
       });
     }
