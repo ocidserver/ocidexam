@@ -74,6 +74,57 @@ export type Database = {
         }
         Relationships: []
       }
+      questions: {
+        Row: {
+          active: boolean
+          category: Database["public"]["Enums"]["question_category"]
+          content: string
+          correct_answer: string
+          created_at: string
+          created_by: string | null
+          difficulty: Database["public"]["Enums"]["question_difficulty"]
+          explanation: string | null
+          id: string
+          options: Json
+          question_type: string
+          title: string
+          topic_tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category: Database["public"]["Enums"]["question_category"]
+          content: string
+          correct_answer: string
+          created_at?: string
+          created_by?: string | null
+          difficulty: Database["public"]["Enums"]["question_difficulty"]
+          explanation?: string | null
+          id?: string
+          options: Json
+          question_type: string
+          title: string
+          topic_tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: Database["public"]["Enums"]["question_category"]
+          content?: string
+          correct_answer?: string
+          created_at?: string
+          created_by?: string | null
+          difficulty?: Database["public"]["Enums"]["question_difficulty"]
+          explanation?: string | null
+          id?: string
+          options?: Json
+          question_type?: string
+          title?: string
+          topic_tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       skills: {
         Row: {
           created_at: string
@@ -192,6 +243,27 @@ export type Database = {
           },
         ]
       }
+      topic_tags: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       user_achievements: {
         Row: {
           achieved_at: string
@@ -277,7 +349,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      question_category: "listening" | "reading" | "writing" | "speaking"
+      question_difficulty: "easy" | "medium" | "hard"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -392,6 +465,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      question_category: ["listening", "reading", "writing", "speaking"],
+      question_difficulty: ["easy", "medium", "hard"],
+    },
   },
 } as const
