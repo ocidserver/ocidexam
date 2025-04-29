@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Upload, Download } from "lucide-react";
+import { Plus, Upload, Download, FileText, Settings, ChevronDown } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useQuestions } from "../hooks/useQuestions";
 import { useTopicTags } from "../hooks/useTopicTags";
@@ -11,11 +11,15 @@ import { QuestionFiltersComponent } from "./QuestionFilters";
 import { QuestionsTable } from "./QuestionsTable";
 import { QuestionForm } from "./QuestionForm";
 import { TagsManagement } from "./TagsManagement";
+import { ImportQuestionsDialog } from "./ImportQuestionsDialog";
+import { ExportQuestionsDialog } from "./ExportQuestionsDialog";
 import { useAdminStatus } from "@/hooks/use-admin-status";
 import { useNavigate } from "react-router-dom";
 
 export const QuestionBank = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const { isAdmin, isLoading: isLoadingAdminStatus } = useAdminStatus();
   const navigate = useNavigate();
@@ -58,6 +62,16 @@ export const QuestionBank = () => {
     handleCloseForm();
   };
 
+  const handleBulkImport = async (questions: Partial<Question>[]) => {
+    // Create promises for all question creations
+    const importPromises = questions.map(questionData => 
+      createQuestion(questionData as Omit<Question, "id" | "created_at" | "updated_at" | "created_by">)
+    );
+    
+    // Wait for all to complete
+    await Promise.all(importPromises);
+  };
+
   // Redirect non-admin users
   if (isAdmin === false && !isLoadingAdminStatus) {
     navigate("/");
@@ -86,11 +100,11 @@ export const QuestionBank = () => {
             <Plus className="h-4 w-4 mr-2" />
             New Question
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => setIsImportOpen(true)}>
             <Upload className="h-4 w-4 mr-2" />
             Import
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => setIsExportOpen(true)}>
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
@@ -141,6 +155,18 @@ export const QuestionBank = () => {
           topicTags={topicTags}
         />
       )}
+
+      <ImportQuestionsDialog
+        isOpen={isImportOpen}
+        onClose={() => setIsImportOpen(false)}
+        onImport={handleBulkImport}
+      />
+
+      <ExportQuestionsDialog
+        isOpen={isExportOpen}
+        onClose={() => setIsExportOpen(false)}
+        questions={questions}
+      />
     </div>
   );
 };
