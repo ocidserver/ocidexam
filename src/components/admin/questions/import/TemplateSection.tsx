@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { downloadCSV, generateQuestionTemplateData } from "@/utils/csvUtils";
 import { Download } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 export const TemplateSection: React.FC = () => {
   const { toast } = useToast();
