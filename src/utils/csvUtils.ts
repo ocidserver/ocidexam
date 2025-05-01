@@ -1,6 +1,6 @@
 
 import { Question, QuestionCategory, QuestionDifficulty } from "@/components/admin/types/question-types";
-import { parse } from "papaparse";
+import { parse, ParseResult } from "papaparse";
 
 // Template headers for Question Bank CSV
 export const QUESTION_CSV_HEADERS = [
@@ -69,7 +69,7 @@ export const parseQuestionCSV = (csvText: string): {
   // Parse CSV
   const { data, errors: parseErrors } = parse(csvText, {
     skipEmptyLines: true,
-  });
+  }) as ParseResult<string[]>;
   
   if (parseErrors.length > 0) {
     return {
