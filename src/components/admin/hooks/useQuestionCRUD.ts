@@ -1,8 +1,11 @@
 
 import { User } from "@supabase/supabase-js";
-import { Toast } from "@/hooks/use-toast";
+import { toast as toastFunction } from "@/hooks/use-toast";
 import { Question } from "../types/question-types";
 import { supabase } from "@/integrations/supabase/client";
+
+// Define the Toast type to match what's expected
+type Toast = Parameters<typeof toastFunction>[0];
 
 export const useQuestionCRUD = (
   user: User | null,
