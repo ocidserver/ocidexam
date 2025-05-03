@@ -24,6 +24,8 @@ export const QuestionBank = () => {
   const { isAdmin, isLoading: isLoadingAdminStatus } = useAdminStatus();
   const navigate = useNavigate();
 
+  // Use our refactored useQuestions hook which now internally uses 
+  // the smaller hooks for specific functionality
   const {
     questions,
     loading: questionsLoading,
@@ -34,6 +36,7 @@ export const QuestionBank = () => {
     updateQuestion,
     deleteQuestion,
     toggleQuestionStatus,
+    fetchQuestions
   } = useQuestions();
 
   const {
