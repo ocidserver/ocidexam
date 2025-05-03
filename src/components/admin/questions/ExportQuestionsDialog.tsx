@@ -9,11 +9,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Question } from "../types/question-types";
 import { questionsToCSV, downloadCSV } from "@/utils/csvUtils";
 import { Download } from "lucide-react";
+import { ExportOptions } from "./export/ExportOptions";
+import { ExportSummary } from "./export/ExportSummary";
 
 interface ExportQuestionsDialogProps {
   isOpen: boolean;
@@ -58,28 +58,15 @@ export const ExportQuestionsDialog: React.FC<ExportQuestionsDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Export Options</h3>
-            
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="activeOnly" 
-                checked={exportActiveOnly}
-                onCheckedChange={(checked) => setExportActiveOnly(checked === true)}
-              />
-              <Label htmlFor="activeOnly">Export active questions only</Label>
-            </div>
-          </div>
-          
-          <div className="border rounded-md p-4">
-            <div className="text-sm text-muted-foreground">
-              <p>You are about to export {exportActiveOnly 
-                ? questions.filter(q => q.active).length 
-                : questions.length} questions.</p>
-            </div>
-          </div>
-        </div>
+        <ExportOptions
+          exportActiveOnly={exportActiveOnly}
+          setExportActiveOnly={setExportActiveOnly}
+        />
+        
+        <ExportSummary 
+          questions={questions}
+          exportActiveOnly={exportActiveOnly}
+        />
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
